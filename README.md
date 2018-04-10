@@ -5,7 +5,7 @@ In this project, we try to predict the class of images in mnist dataset. This pr
 Mnist classification with [Multi Layer perceptron](https://github.com/abishekarun/mnist/blob/master/mnist_mlp.ipynb)\
 Mnist classification with [CNN](https://github.com/abishekarun/mnist/blob/master/mnist_cnn.ipynb)\
 Mnist dataset with [Simple Autoencoder](https://github.com/abishekarun/mnist/blob/master/mnist_autoencoder.ipynb)\
-Mnist dataset for [Denoising](https://github.com/abishekarun/mnist/blob/master/mnist_cnn_autoencoder.ipynb)\
+Mnist dataset for [Denoising](https://github.com/abishekarun/mnist/blob/master/mnist_cnn_autoencoder.ipynb)
 
 ![mnist-dataset](http://corochann.com/wp-content/uploads/2017/02/mnist_plot-800x600.png)\
 
