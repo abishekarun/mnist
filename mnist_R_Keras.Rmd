@@ -1,0 +1,115 @@
+---
+title: "mnist_R_Keras"
+author: "Arun"
+date: "April 22, 2018"
+output: html_document
+---
+
+In this, we try to solve digit classification on mnist dataset using cnn.
+
+Load package
+```{r setup, include=FALSE}
+
+library(keras)
+
+```
+
+Prepare the data
+
+```{r}
+
+batch_size <- 128
+num_classes <- 10
+epochs <- 12
+```
+
+Next, the dimensions of input image.
+```{r}
+img_rows <- 28
+img_cols <- 28
+```
+
+The data is shuffled and split for training and testing.
+```{r}
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+```
+
+Now, lets reshape the dimensions of data.
+```{r}
+x_train <- array_reshape(x_train, c(nrow(x_train), img_rows, img_cols, 1))
+x_test <- array_reshape(x_test, c(nrow(x_test), img_rows, img_cols, 1))
+input_shape <- c(img_rows, img_cols, 1)
+```
+
+Transform the rgb values into [0,1] range
+```{r}
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+cat('x_train_shape:', dim(x_train), '\n')
+cat(nrow(x_train), 'train samples\n')
+cat(nrow(x_test), 'test samples\n')
+
+```
+
+Convert class vectors to binary class matrices
+```{r}
+y_train <- to_categorical(y_train, num_classes)
+y_test <- to_categorical(y_test, num_classes)
+```
+
+Lets' define the model in keras
+
+```{r}
+# Define model
+model <- keras_model_sequential() %>%
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = 'relu',
+                input_shape = input_shape) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = 'relu') %>% 
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>% 
+  layer_dropout(rate = 0.25) %>% 
+  layer_flatten() %>% 
+  layer_dense(units = 128, activation = 'relu') %>% 
+  layer_dropout(rate = 0.5) %>% 
+  layer_dense(units = num_classes, activation = 'softmax')
+
+```
+
+Next, we compile the model
+```{r}
+# Compile model
+model %>% compile(
+  loss = loss_categorical_crossentropy,
+  optimizer = optimizer_adadelta(),
+  metrics = c('accuracy')
+)
+
+```
+
+Now, lets train it on the training set.
+```{r}
+# Train model
+model %>% fit(
+  x_train, y_train,
+  batch_size = batch_size,
+  epochs = epochs,
+  validation_split = 0.2
+)
+
+```
+
+Finally, we display the accuracy of the model on test dataset.
+```{r}
+scores <- model %>% evaluate(
+  x_test, y_test, verbose = 0
+)
+
+# Output metrics
+cat('Test loss:', scores[[1]], '\n')
+cat('Test accuracy:', scores[[2]], '\n')
+```
+
